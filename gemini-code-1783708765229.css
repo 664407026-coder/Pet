@@ -1,0 +1,143 @@
+:root {
+    --bg-color: #2c3e50;
+    --panel-bg: #ecf0f1;
+    --border-color: #000;
+    --text-color: #2c3e50;
+    --primary: #3498db;
+    --danger: #e74c3c;
+    --success: #2ecc71;
+    --exp: #f1c40f;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Mali', cursive; /* ใช้ฟอนต์น่ารักสำหรับข้อความทั่วไป */
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+h1, h2, p, span {
+    font-family: 'Press Start 2P', cursive; /* ใช้ฟอนต์พิกเซลสำหรับหัวข้อ */
+}
+
+h1 { font-size: 24px; line-height: 1.5; }
+h2 { font-size: 16px; border-bottom: 4px solid var(--border-color); padding-bottom: 10px;}
+
+.hidden { display: none !important; }
+
+/* -------------------
+   ปุ่มสไตล์ Pixel 
+--------------------*/
+.btn-pixel {
+    font-family: 'Mali', cursive;
+    font-weight: 600;
+    font-size: 16px;
+    padding: 10px 15px;
+    background-color: var(--primary);
+    color: white;
+    border: 4px solid var(--border-color);
+    box-shadow: 4px 4px 0px var(--border-color);
+    cursor: pointer;
+    transition: all 0.1s;
+}
+.btn-pixel:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0px 0px 0px var(--border-color);
+}
+.btn-small { padding: 5px 10px; font-size: 12px; background-color: var(--danger); }
+.btn-success { background-color: var(--success); }
+.btn-success:disabled { background-color: #95a5a6; cursor: not-allowed; }
+
+/* -------------------
+   Layout หลัก 
+--------------------*/
+.screen { width: 100%; max-width: 1000px; padding: 20px; box-sizing: border-box; }
+
+.login-box {
+    background: var(--panel-bg);
+    border: 6px solid var(--border-color);
+    box-shadow: 8px 8px 0px var(--border-color);
+    padding: 40px;
+    text-align: center;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.game-app {
+    display: flex;
+    gap: 20px;
+}
+
+@media (max-width: 768px) {
+    .game-app { flex-direction: column; }
+}
+
+.pet-zone, .quest-zone {
+    background: var(--panel-bg);
+    border: 6px solid var(--border-color);
+    box-shadow: 8px 8px 0px var(--border-color);
+    padding: 20px;
+    flex: 1;
+}
+
+/* -------------------
+   Pet Zone & Bars
+--------------------*/
+.user-info { display: flex; justify-content: space-between; margin-bottom: 20px; }
+.user-info span { font-size: 12px; }
+
+.stats-bar p { margin: 5px 0; font-size: 14px;}
+.bar-container { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.bar-container span { font-size: 12px; width: 30px; }
+.bar {
+    flex: 1;
+    height: 20px;
+    background: #bdc3c7;
+    border: 4px solid var(--border-color);
+    position: relative;
+}
+.fill { height: 100%; transition: width 0.3s ease; }
+.hp-fill { background: var(--danger); }
+.exp-fill { background: var(--exp); }
+
+/* อนิเมชันสัตว์เลี้ยง */
+.pet-sprite {
+    font-size: 100px; /* ใช้ emoji เป็นตัวอย่าง */
+    text-align: center;
+    margin-top: 40px;
+    animation: floating 2s ease-in-out infinite;
+}
+
+@keyframes floating {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+}
+
+/* -------------------
+   Quest Zone
+--------------------*/
+.add-form { display: flex; gap: 10px; margin-bottom: 20px; }
+.add-form input {
+    flex: 1;
+    padding: 10px;
+    border: 4px solid var(--border-color);
+    font-family: 'Mali', cursive;
+    font-size: 16px;
+    outline: none;
+}
+
+.task-list { display: flex; flex-direction: column; gap: 10px; }
+.task-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    border: 4px solid var(--border-color);
+    padding: 15px;
+}

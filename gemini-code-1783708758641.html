@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Pet Habit Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- นำเข้าฟอนต์ Pixel จาก Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Mali:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDK (Compat Version เพื่อความง่าย) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+</head>
+<body>
+
+    <!-- หน้าต่าง Login -->
+    <div id="login-screen" class="screen">
+        <div class="login-box">
+            <h1>🐉 Pet Quest</h1>
+            <p>สร้างนิสัยใหม่ เลี้ยงสัตว์พิกเซล</p>
+            <button id="login-btn" class="btn-pixel btn-google">ล็อกอินด้วย Google</button>
+        </div>
+    </div>
+
+    <!-- หน้าต่างแอปหลัก (จะแสดงเมื่อล็อกอินแล้ว) -->
+    <main id="app-screen" class="game-app screen hidden">
+        
+        <!-- โซนสัตว์เลี้ยง -->
+        <section class="pet-zone">
+            <div class="user-info">
+                <span id="player-name">Player</span>
+                <button id="logout-btn" class="btn-pixel btn-small">ออกระบบ</button>
+            </div>
+            
+            <div class="stats-bar">
+                <p>LVL: <span id="pet-level">1</span></p>
+                <div class="bar-container">
+                    <span>HP</span>
+                    <div class="bar"><div id="hp-fill" class="fill hp-fill" style="width: 100%;"></div></div>
+                </div>
+                <div class="bar-container">
+                    <span>EXP</span>
+                    <div class="bar"><div id="exp-fill" class="fill exp-fill" style="width: 0%;"></div></div>
+                </div>
+            </div>
+            
+            <!-- ตัวสัตว์เลี้ยง (ใช้ Emoji เป็นตัวแทนไปก่อน คุณสามารถเปลี่ยนเป็นแท็ก img ได้) -->
+            <div class="pet-sprite">🥚</div>
+        </section>
+
+        <!-- โซนเควสต์ -->
+        <section class="quest-zone">
+            <h2>📋 Daily Quests</h2>
+            
+            <form id="add-quest-form" class="add-form">
+                <input type="text" id="quest-input" placeholder="พิมพ์นิสัยที่อยากทำ..." required>
+                <button type="submit" class="btn-pixel">เพิ่ม</button>
+            </form>
+
+            <div id="task-list" class="task-list">
+                <!-- รายการ Task จะถูกดึงมาจาก JS -->
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
