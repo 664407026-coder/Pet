@@ -1,11 +1,12 @@
 // 1. นำ Config จาก Firebase Console ของคุณมาวางที่นี่
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyBC0CacLGEgkDEHpnY6pbD4BXWeUp_2BQo",
+  authDomain: "pet-9663d.firebaseapp.com",
+  projectId: "pet-9663d",
+  storageBucket: "pet-9663d.firebasestorage.app",
+  messagingSenderId: "53119963470",
+  appId: "1:53119963470:web:77b9ed99c492a3f603ce1f",
+  measurementId: "G-3SQ46X71SN"
 };
 
 // เริ่มต้นใช้งาน Firebase
