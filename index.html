@@ -3,253 +3,338 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pixel Pet Habit Tracker V3 (All-in-One)</title>
+    <title>FitPet: Premium Fitness & Pet Tracker</title>
     
-    <!-- ฟอนต์สไตล์ Pixel Art และฟอนต์ภาษาไทยอ่านง่าย -->
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Mali:wght@400;600&display=swap" rel="stylesheet">
+    <!-- ฟอนต์สไตล์ Modern: Kanit (ไทย) & Nunito (ตัวเลข/อังกฤษ) -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
     
-    <!-- นำเข้า Firebase SDK (เวอร์ชัน v8) -->
+    <!-- นำเข้า Firebase SDK (v8) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
     <style>
         :root {
-            --bg-color: #1a252c;
-            --panel-bg: #ecf0f1;
-            --border-color: #2c3e50;
-            --text-color: #2c3e50;
-            --primary: #3498db;
-            --danger: #e74c3c;
-            --success: #2ecc71;
-            --exp: #f1c40f;
-            --table-header: #bdc3c7;
+            --bg-color: #F4F7FC;
+            --text-main: #2D3436;
+            --text-muted: #636E72;
+            --primary: #6C5CE7;
+            --primary-hover: #5A4BCC;
+            --secondary: #00B894;
+            --danger: #FF7675;
+            --warning: #FDCB6E;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --shadow: 0 12px 24px rgba(0, 0, 0, 0.05);
+            --border-radius: 24px;
         }
 
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Mali', cursive;
-            background-color: var(--bg-color);
-            background-image: linear-gradient(#2c3e50 2px, transparent 2px), linear-gradient(90deg, #2c3e50 2px, transparent 2px);
-            background-size: 40px 40px;
-            color: var(--text-color);
+            font-family: 'Kanit', sans-serif;
+            background: var(--bg-color);
+            background-image: radial-gradient(circle at 15% 50%, rgba(108, 92, 231, 0.1), transparent 25%),
+                              radial-gradient(circle at 85% 30%, rgba(0, 184, 148, 0.1), transparent 25%);
+            color: var(--text-main);
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
-        h1, h2, h3, p, span { font-family: 'Press Start 2P', cursive; }
-        h1 { font-size: 24px; color: var(--primary); text-shadow: 2px 2px 0px #000; }
-        h2 { font-size: 16px; border-bottom: 4px solid var(--border-color); padding-bottom: 10px; margin-top: 0;}
-        h3 { font-size: 12px; margin-bottom: 10px; }
+        h1, h2, h3 { margin: 0; font-weight: 600; }
+        .num-font { font-family: 'Nunito', sans-serif; }
         .hidden { display: none !important; }
 
-        .btn-pixel {
-            font-family: 'Mali', cursive;
+        /* ปุ่มสไตล์ Premium */
+        .btn-modern {
+            font-family: 'Kanit', sans-serif;
             font-weight: 600;
             font-size: 16px;
-            padding: 10px 15px;
-            background-color: var(--primary);
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
             color: white;
-            border: 4px solid var(--border-color);
-            box-shadow: 4px 4px 0px var(--border-color);
+            border: none;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.1s;
+            box-shadow: 0 6px 15px rgba(108, 92, 231, 0.3);
+            transition: all 0.2s ease;
         }
-        .btn-pixel:active {
-            transform: translate(4px, 4px);
-            box-shadow: 0px 0px 0px var(--border-color);
-        }
-        .btn-small { padding: 5px 10px; font-size: 11px; box-shadow: 2px 2px 0px var(--border-color); }
-        .btn-danger { background-color: var(--danger); }
-        .btn-success { background-color: var(--success); }
+        .btn-modern:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(108, 92, 231, 0.4); }
+        .btn-modern:active { transform: translateY(1px); box-shadow: 0 4px 10px rgba(108, 92, 231, 0.3); }
+        .btn-small { padding: 8px 16px; font-size: 14px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .btn-danger { background: linear-gradient(135deg, var(--danger), #D63031); box-shadow: 0 6px 15px rgba(255, 118, 117, 0.3); }
+        .btn-success { background: linear-gradient(135deg, var(--secondary), #00997B); box-shadow: 0 6px 15px rgba(0, 184, 148, 0.3); }
 
-        .pixel-select {
-            padding: 8px;
-            border: 4px solid var(--border-color);
-            font-family: 'Mali', cursive;
-            font-size: 13px;
+        .input-modern, .select-modern {
+            padding: 12px 16px;
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
+            font-family: 'Kanit', sans-serif;
+            font-size: 15px;
             outline: none;
             background: white;
-            flex: 1;
+            transition: border-color 0.2s;
         }
+        .input-modern:focus, .select-modern:focus { border-color: var(--primary); }
 
-        .screen { width: 100%; max-width: 1200px; padding: 20px; box-sizing: border-box; }
+        /* Layout หลัก */
+        .screen { width: 100%; max-width: 1000px; }
         .login-box {
-            background: var(--panel-bg);
-            border: 6px solid var(--border-color);
-            box-shadow: 8px 8px 0px #000;
-            padding: 40px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 50px 40px;
             text-align: center;
             max-width: 400px;
-            margin: 0 auto;
+            margin: 10vh auto 0;
         }
+        .login-box h1 { font-size: 32px; color: var(--primary); margin-bottom: 10px; }
+        .login-box p { color: var(--text-muted); margin-bottom: 30px; }
 
         .game-app {
             display: grid;
-            grid-template-columns: 1fr 1.3fr 1.2fr;
-            gap: 20px;
+            grid-template-columns: 350px 1fr;
+            gap: 30px;
+            align-items: start;
         }
 
-        @media (max-width: 992px) {
-            .game-app { grid-template-columns: 1fr 1fr; }
-            .dashboard-zone { grid-column: span 2; }
-        }
-        @media (max-width: 768px) {
+        @media (max-width: 850px) {
             .game-app { grid-template-columns: 1fr; }
-            .dashboard-zone { grid-column: span 1; }
         }
 
+        /* Glassmorphism Cards */
         .panel {
-            background: var(--panel-bg);
-            border: 6px solid var(--border-color);
-            box-shadow: 8px 8px 0px #000;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.6);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
         }
 
-        .user-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .user-info h2 { border: none; margin: 0; font-size: 14px;}
-
-        .pixel-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-family: 'Mali', cursive;
-            font-size: 14px;
-            font-weight: 600;
-            border: 4px solid var(--border-color);
+        /* โซนโปรไฟล์ & สถิติ */
+        .user-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .user-header h2 { font-size: 20px; }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .stat-card {
             background: white;
+            padding: 15px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+            border: 1px solid #F1F2F6;
         }
-        .pixel-table th, .pixel-table td { border: 2px solid var(--border-color); padding: 10px; }
-        .pixel-table th { background-color: var(--table-header); font-family: 'Press Start 2P', cursive; font-size: 10px; }
+        .stat-card .icon { font-size: 24px; margin-bottom: 5px; display: block; }
+        .stat-card .value { font-size: 22px; font-weight: 800; color: var(--primary); }
+        .stat-card .label { font-size: 12px; color: var(--text-muted); }
 
-        .stats-bar p { margin: 5px 0; font-size: 12px;}
-        .pet-type-label { font-size: 9px !important; color: #555; margin-bottom: 12px !important; }
-        .bar-container { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .bar-container span { font-size: 12px; width: 30px; }
-        .bar { flex: 1; height: 20px; background: #bdc3c7; border: 4px solid var(--border-color); position: relative; }
-        .fill { height: 100%; transition: width 0.3s ease; }
-        .hp-fill { background: var(--danger); }
-        .exp-fill { background: var(--exp); }
-
-        .pet-container { position: relative; text-align: center; margin-top: 30px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .pet-hint { font-size: 8px; color: #7f8c8d; margin-top: 15px; }
-        .pet-sprite { font-size: 110px; cursor: pointer; user-select: none; animation: floating 3s ease-in-out infinite; transition: transform 0.1s; }
-        .pet-sprite:hover { transform: scale(1.05); }
-
-        @keyframes floating {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-12px); }
-            100% { transform: translateY(0px); }
+        /* โซนสัตว์เลี้ยง 3D Effect */
+        .pet-zone {
+            background: linear-gradient(135deg, #ffffff, #F8F9FA);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border-top: 4px solid var(--primary);
         }
-        .jump-anim { animation: jump 0.4s ease-out !important; }
-        @keyframes jump {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-35px); }
-            100% { transform: translateY(0); }
+        
+        /* วงแหวนออร่าด้านหลังสัตว์ */
+        .aura-ring {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 250px; height: 250px;
+            background: radial-gradient(circle, rgba(108,92,231,0.15) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+            z-index: 0;
+            animation: pulse 4s infinite ease-in-out;
         }
-        .floating-heart { position: absolute; font-size: 30px; top: 20%; left: 50%; animation: floatUp 1s ease-out forwards; }
+
+        .pet-sprite {
+            position: relative;
+            z-index: 1;
+            font-size: 140px;
+            cursor: pointer;
+            user-select: none;
+            /* เพิ่ม 3D Drop Shadow ให้ดูลอยและมีมิติ */
+            filter: drop-shadow(0px 15px 15px rgba(0,0,0,0.25));
+            animation: floating3D 3s ease-in-out infinite;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin: 40px 0;
+        }
+        .pet-sprite:hover { transform: scale(1.1); filter: drop-shadow(0px 25px 20px rgba(0,0,0,0.3)); }
+
+        @keyframes floating3D {
+            0% { transform: translateY(0px) rotate(0deg); filter: drop-shadow(0px 15px 15px rgba(0,0,0,0.25)); }
+            50% { transform: translateY(-15px) rotate(2deg); filter: drop-shadow(0px 25px 20px rgba(0,0,0,0.15)); }
+            100% { transform: translateY(0px) rotate(0deg); filter: drop-shadow(0px 15px 15px rgba(0,0,0,0.25)); }
+        }
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
+            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
+        }
+
+        /* หลอดพลังงานสไตล์โมเดิร์น */
+        .status-area { margin-top: 20px; }
+        .pet-type-label { font-size: 14px; color: var(--primary); font-weight: 600; margin-bottom: 15px; }
+        .bar-wrapper { display: flex; align-items: center; gap: 15px; margin-bottom: 12px; }
+        .bar-wrapper span { font-size: 13px; font-weight: 600; width: 35px; color: var(--text-muted); }
+        .bar-bg { flex: 1; height: 16px; background: #E2E8F0; border-radius: 20px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
+        .fill { height: 100%; border-radius: 20px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .hp-fill { background: linear-gradient(90deg, #FF7675, #D63031); }
+        .exp-fill { background: linear-gradient(90deg, #FDCB6E, #E1B12C); }
+        .lvl-badge { background: var(--primary); color: white; padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: bold; display: inline-block; margin-bottom: 15px; }
+
+        /* โซนเควสต์ (เป้าหมาย) */
+        .quest-header { font-size: 22px; margin-bottom: 20px; color: var(--primary); border-bottom: 2px solid #F1F2F6; padding-bottom: 10px; }
+        
+        .add-form { display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px; background: white; padding: 20px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+        .select-group { display: flex; gap: 10px; }
+        .select-group select { flex: 1; }
+        
+        .task-list { display: flex; flex-direction: column; gap: 12px; overflow-y: auto; max-height: 400px; padding-right: 5px; }
+        .task-list::-webkit-scrollbar { width: 6px; }
+        .task-list::-webkit-scrollbar-thumb { background: #DFE6E9; border-radius: 10px; }
+
+        .task-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 16px 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            border-left: 4px solid var(--primary);
+            transition: transform 0.2s;
+        }
+        .task-card:hover { transform: translateX(5px); }
+        
+        .task-title { display: flex; flex-direction: column; gap: 6px; font-size: 16px; font-weight: 500; }
+        .task-title .title-text { display: flex; align-items: center; gap: 8px; }
+        .badge { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 12px; width: fit-content; }
+        .diff-easy { background: rgba(0, 184, 148, 0.1); color: #00B894; }
+        .diff-medium { background: rgba(253, 203, 110, 0.15); color: #E1B12C; }
+        .diff-hard { background: rgba(255, 118, 117, 0.1); color: #D63031; }
+
+        .action-group { display: flex; gap: 8px; }
+
+        /* อนิเมชันกระโดดตอนกดเล่น */
+        .jump-anim { animation: jump3D 0.5s ease-out !important; }
+        @keyframes jump3D {
+            0% { transform: translateY(0) scale(1); filter: drop-shadow(0px 15px 15px rgba(0,0,0,0.25)); }
+            50% { transform: translateY(-40px) scale(1.05); filter: drop-shadow(0px 35px 25px rgba(0,0,0,0.15)); }
+            100% { transform: translateY(0) scale(1); filter: drop-shadow(0px 15px 15px rgba(0,0,0,0.25)); }
+        }
+        
+        .floating-heart { position: absolute; font-size: 30px; top: 30%; left: 50%; z-index: 10; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2)); animation: floatUp 1s ease-out forwards; }
         @keyframes floatUp {
             0% { opacity: 1; transform: translate(-50%, 0) scale(1); }
-            100% { opacity: 0; transform: translate(-50%, -60px) scale(1.4); }
+            100% { opacity: 0; transform: translate(-50%, -80px) scale(1.5); }
         }
-
-        .add-form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-        .select-group { display: flex; gap: 10px; }
-        .add-form input { padding: 10px; border: 4px solid var(--border-color); font-family: 'Mali', cursive; font-size: 15px; outline: none; }
-
-        .task-list { display: flex; flex-direction: column; gap: 10px; overflow-y: auto; max-height: 380px; }
-        .task-card { display: flex; justify-content: space-between; align-items: center; background: white; border: 4px solid var(--border-color); padding: 12px; }
-        .task-title { display: flex; flex-direction: column; gap: 4px; font-weight: bold; font-size: 15px; }
-        .task-difficulty-badge { font-family: 'Press Start 2P', cursive; font-size: 8px; }
-        .diff-easy { color: var(--success); }
-        .diff-medium { color: var(--exp); }
-        .diff-hard { color: var(--danger); }
-        .action-group { display: flex; gap: 6px; align-items: center; }
     </style>
 </head>
 <body>
 
-    <!-- หน้าจอเข้าสู่ระบบ -->
+    <!-- Login Screen -->
     <div id="login-screen" class="screen">
         <div class="login-box">
-            <h1>🐉 Pet Quest</h1>
-            <p>สร้างนิสัยใหม่ เลี้ยงสัตว์พิกเซล</p>
-            <button id="login-btn" class="btn-pixel btn-google">ล็อกอินด้วย Google</button>
+            <h1>✨ FitPet</h1>
+            <p>ยกระดับการสร้างนิสัย พร้อมเลี้ยงสัตว์แสนน่ารัก</p>
+            <button id="login-btn" class="btn-modern" style="width: 100%;">เข้าสู่ระบบด้วย Google</button>
         </div>
     </div>
 
-    <!-- หน้าจอหลักของเกม -->
+    <!-- Main App Screen -->
     <main id="app-screen" class="game-app screen hidden">
         
-        <aside class="panel dashboard-zone">
-            <div class="user-info">
-                <h2>👤 <span id="player-name">Player</span></h2>
-                <button id="logout-btn" class="btn-pixel btn-small btn-danger">ออกระบบ</button>
-            </div>
-            
-            <div class="dashboard-stats">
-                <h3>📊 สถิติพฤติกรรมสะสม</h3>
-                <table class="pixel-table">
-                    <thead>
-                        <tr>
-                            <th>กิจกรรม</th>
-                            <th>จำนวนครั้ง</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>🍎 การกิน</td><td id="stat-eat">0</td></tr>
-                        <tr><td>💤 การพักผ่อน</td><td id="stat-rest">0</td></tr>
-                        <tr><td>🏃 ออกกำลังกาย</td><td id="stat-workout">0</td></tr>
-                        <tr><td>❤️ เล่นกับสัตว์</td><td id="stat-play">0</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </aside>
-
-        <section class="panel pet-zone">
-            <div class="stats-bar">
-                <p>LVL: <span id="pet-level">1</span></p>
-                <p class="pet-type-label">สายพันธุ์: <span id="pet-type-name">กำลังสุ่ม...</span></p>
-                <div class="bar-container">
-                    <span>HP</span>
-                    <div class="bar"><div id="hp-fill" class="fill hp-fill" style="width: 100%;"></div></div>
+        <!-- ซ้าย: Dashboard & Stats -->
+        <div class="left-col" style="display: flex; flex-direction: column; gap: 20px;">
+            <aside class="panel">
+                <div class="user-header">
+                    <h2>👋 สวัสดี, <span id="player-name">Player</span></h2>
+                    <button id="logout-btn" class="btn-modern btn-small btn-danger">ออก</button>
                 </div>
-                <div class="bar-container">
-                    <span>EXP</span>
-                    <div class="bar"><div id="exp-fill" class="fill exp-fill" style="width: 0%;"></div></div>
+                
+                <h3 style="margin-bottom: 15px; font-size: 15px; color: var(--text-muted);">สถิติสุขภาพของคุณ</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="icon">🥗</span>
+                        <div class="value num-font" id="stat-eat">0</div>
+                        <div class="label">โภชนาการ</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="icon">💤</span>
+                        <div class="value num-font" id="stat-rest">0</div>
+                        <div class="label">การพักผ่อน</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="icon">🏃</span>
+                        <div class="value num-font" id="stat-workout">0</div>
+                        <div class="label">ออกกำลังกาย</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="icon">💖</span>
+                        <div class="value num-font" id="stat-play">0</div>
+                        <div class="label">ความผูกพัน</div>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="pet-container">
-                <div class="pet-sprite" title="คลิกเพื่อเล่นด้วย!">🥚</div>
-                <p class="pet-hint">(คลิกที่สัตว์เลี้ยงเพื่อเล่นด้วย)</p>
-            </div>
-        </section>
+            </aside>
 
+            <!-- กลาง: โซนสัตว์เลี้ยง (Premium 3D Feel) -->
+            <section class="panel pet-zone">
+                <div class="aura-ring"></div>
+                <div class="lvl-badge">Level <span class="num-font" id="pet-level">1</span></div>
+                <div class="pet-type-label" id="pet-type-name">กำลังประเมินสายพันธุ์...</div>
+                
+                <div class="pet-sprite" title="แตะเพื่อเล่นด้วย!">🥚</div>
+                <p style="font-size: 12px; color: #B2BEC3; margin-top: -10px;">(แตะที่สัตว์เลี้ยงเพื่อสร้างความผูกพัน)</p>
+
+                <div class="status-area">
+                    <div class="bar-wrapper">
+                        <span>HP</span>
+                        <div class="bar-bg"><div id="hp-fill" class="fill hp-fill" style="width: 100%;"></div></div>
+                    </div>
+                    <div class="bar-wrapper">
+                        <span>EXP</span>
+                        <div class="bar-bg"><div id="exp-fill" class="fill exp-fill" style="width: 0%;"></div></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ขวา: เควสต์ประจำวัน -->
         <section class="panel quest-zone">
-            <h2>📋 Daily Quests</h2>
+            <h2 class="quest-header">🎯 เป้าหมายประจำวัน</h2>
+            
             <form id="add-quest-form" class="add-form">
+                <input type="text" id="quest-input" class="input-modern" placeholder="ตั้งเป้าหมายวันนี้..." required autocomplete="off">
                 <div class="select-group">
-                    <select id="quest-category" class="pixel-select">
-                        <option value="eat">🍎 กิน</option>
+                    <select id="quest-category" class="select-modern">
+                        <option value="eat">🥗 โภชนาการ</option>
                         <option value="rest">💤 พักผ่อน</option>
-                        <option value="workout">🏃 ออกกำลัง</option>
-                        <option value="other">⭐ ทั่วไป</option>
+                        <option value="workout">🏃 ออกกำลังกาย</option>
+                        <option value="other">✨ ทั่วไป</option>
                     </select>
-                    <select id="quest-difficulty" class="pixel-select">
-                        <option value="easy">🟢 ง่าย (+10 EXP)</option>
-                        <option value="medium" selected>🟡 กลาง (+20 EXP)</option>
-                        <option value="hard">🔴 ยาก (+45 EXP)</option>
+                    <select id="quest-difficulty" class="select-modern">
+                        <option value="easy">🟢 ง่าย (+10)</option>
+                        <option value="medium" selected>🟡 กลาง (+20)</option>
+                        <option value="hard">🔴 ยาก (+45)</option>
                     </select>
                 </div>
-                <input type="text" id="quest-input" placeholder="พิมพ์เป้าหมายที่คุณอยากทำ..." required autocomplete="off">
-                <button type="submit" class="btn-pixel">เพิ่มเควสต์</button>
+                <button type="submit" class="btn-modern">เพิ่มเป้าหมาย</button>
             </form>
-            <div id="task-list" class="task-list"></div>
+
+            <div id="task-list" class="task-list">
+                <!-- รายการเป้าหมายจะโผล่ที่นี่ -->
+            </div>
         </section>
     </main>
 
@@ -257,7 +342,7 @@
         // -----------------------------------------------------
         // ⚠️ ใส่ข้อมูล Firebase Config ของคุณตรงนี้
         // -----------------------------------------------------
-      const firebaseConfig = {
+        const firebaseConfig = {
               apiKey: "AIzaSyBC0CacLGEgkDEHpnY6pbD4BXWeUp_2BQo",
               authDomain: "pet-9663d.firebaseapp.com",
               projectId: "pet-9663d",
@@ -267,29 +352,27 @@
               measurementId: "G-3SQ46X71SN"
         };
 
-        // เริ่มต้นใช้งาน Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Elements
         const loginScreen = document.getElementById('login-screen');
         const appScreen = document.getElementById('app-screen');
         const loginBtn = document.getElementById('login-btn');
         const logoutBtn = document.getElementById('logout-btn');
         const playerName = document.getElementById('player-name');
+        
         const petLevelEl = document.getElementById('pet-level');
         const petTypeName = document.getElementById('pet-type-name');
         const expFill = document.getElementById('exp-fill');
         const petSprite = document.querySelector('.pet-sprite');
-        const petContainer = document.querySelector('.pet-container');
+        
         const addQuestForm = document.getElementById('add-quest-form');
         const questInput = document.getElementById('quest-input');
         const questCategory = document.getElementById('quest-category');
         const questDifficulty = document.getElementById('quest-difficulty');
         const taskList = document.getElementById('task-list');
 
-        // Stats Elements
         const statEat = document.getElementById('stat-eat');
         const statRest = document.getElementById('stat-rest');
         const statWorkout = document.getElementById('stat-workout');
@@ -300,7 +383,6 @@
         let localStats = { eat: 0, rest: 0, workout: 0, play: 0 };
         const petTypes = ['beast', 'bird', 'dragon'];
 
-        // Authentication
         loginBtn.addEventListener('click', () => {
             const provider = new firebase.auth.GoogleAuthProvider();
             auth.signInWithPopup(provider).catch(console.error);
@@ -323,7 +405,6 @@
             }
         });
 
-        // Initialize Pet Data & Random System
         function initPetData() {
             const userRef = db.collection('users').doc(currentUser.uid);
             userRef.onSnapshot((doc) => {
@@ -345,7 +426,6 @@
             });
         }
 
-        // Evolution System
         function updatePetUI() {
             petLevelEl.textContent = petData.level;
             expFill.style.width = `${petData.exp}%`;
@@ -354,7 +434,7 @@
             const type = petData.petType || 'beast';
             let sprite = '🥚'; 
             
-            const typeDisplayNames = { beast: 'สัตว์จอมพลัง 🦊', bird: 'ปักษาเวหา 🦅', dragon: 'มังกรโบราณ 🐉' };
+            const typeDisplayNames = { beast: 'สายพันธุ์: สัตว์จอมพลัง 🦊', bird: 'สายพันธุ์: ปักษาเวหา 🦅', dragon: 'สายพันธุ์: มังกรโบราณ 🐉' };
             petTypeName.textContent = typeDisplayNames[type] || 'ไข่ปริศนา';
 
             if (lvl >= 5) {
@@ -385,13 +465,12 @@
             statPlay.textContent = localStats.play || 0;
         }
 
-        // Play Animation
         petSprite.addEventListener('click', () => {
             petSprite.classList.add('jump-anim');
             const heart = document.createElement('div');
-            heart.textContent = ['❤️', '✨', '🎵'][Math.floor(Math.random() * 3)];
+            heart.textContent = ['💖', '✨', '🎵'][Math.floor(Math.random() * 3)];
             heart.className = 'floating-heart';
-            petContainer.appendChild(heart);
+            document.querySelector('.pet-zone').appendChild(heart);
             
             localStats.play += 1;
             updateDashboardUI();
@@ -400,10 +479,9 @@
             setTimeout(() => {
                 petSprite.classList.remove('jump-anim');
                 heart.remove();
-            }, 1000);
+            }, 500);
         });
 
-        // Add Quest
         addQuestForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const title = questInput.value.trim();
@@ -419,7 +497,6 @@
             }).then(() => { questInput.value = ''; });
         });
 
-        // Load & Hide Completed Quests
         function loadQuests() {
             db.collection('users').doc(currentUser.uid).collection('habits')
                 .onSnapshot((snapshot) => {
@@ -433,7 +510,7 @@
                             isDoneToday = (lastDate === new Date().toDateString());
                         }
                         
-                        if (isDoneToday) return; // ข้ามการแสดงผลถ้าทำเสร็จไปแล้ววันนี้
+                        if (isDoneToday) return; 
 
                         renderQuestCard(doc.id, quest.title, quest.category, quest.difficulty);
                     });
@@ -442,40 +519,41 @@
 
         function getCategoryIcon(cat) {
             switch(cat) {
-                case 'eat': return '🍎';
+                case 'eat': return '🥗';
                 case 'rest': return '💤';
                 case 'workout': return '🏃';
-                default: return '⭐';
+                default: return '✨';
             }
         }
 
-        // Render Cards with Delete and Done buttons
         function renderQuestCard(id, title, category, difficulty) {
             const card = document.createElement('div');
             card.className = 'task-card';
             
             const textContainer = document.createElement('div');
             textContainer.className = 'task-title';
-            const diffTexts = { easy: 'ง่าย', medium: 'กลาง', hard: 'ยาก' };
+            const diffTexts = { easy: 'ระดับง่าย', medium: 'ระดับกลาง', hard: 'ระดับยาก' };
             
             textContainer.innerHTML = `
-                <div>${getCategoryIcon(category)} ${title}</div>
-                <span class="task-difficulty-badge diff-${difficulty}">[${diffTexts[difficulty] || 'กลาง'}]</span>
+                <div class="title-text">${getCategoryIcon(category)} ${title}</div>
+                <span class="badge diff-${difficulty}">${diffTexts[difficulty]}</span>
             `;
             
             const actionGroup = document.createElement('div');
             actionGroup.className = 'action-group';
 
             const btnDone = document.createElement('button');
-            btnDone.className = 'btn-pixel btn-small btn-success';
-            btnDone.textContent = 'ทำแล้ว';
+            btnDone.className = 'btn-modern btn-small btn-success';
+            btnDone.innerHTML = '✔';
+            btnDone.title = 'สำเร็จ';
             btnDone.onclick = () => completeQuest(id, category, difficulty);
 
             const btnDelete = document.createElement('button');
-            btnDelete.className = 'btn-pixel btn-small btn-danger';
-            btnDelete.textContent = '🗑️';
+            btnDelete.className = 'btn-modern btn-small btn-danger';
+            btnDelete.innerHTML = '✕';
+            btnDelete.title = 'ลบ';
             btnDelete.onclick = () => {
-                if(confirm('ต้องการลบเป้าหมายนี้ใช่หรือไม่?')) {
+                if(confirm('คุณต้องการลบเป้าหมายนี้ใช่หรือไม่?')) {
                     db.collection('users').doc(currentUser.uid).collection('habits').doc(id).delete();
                 }
             };
@@ -487,7 +565,6 @@
             taskList.appendChild(card);
         }
 
-        // Complete Quest & Gain EXP
         function completeQuest(questId, category, difficulty) {
             const userRef = db.collection('users').doc(currentUser.uid);
             const questRef = userRef.collection('habits').doc(questId);
@@ -509,7 +586,7 @@
             }
 
             if (isLevelUp) {
-                alert(`🎉 ยินดีด้วย! สัตว์เลี้ยงของคุณเลื่อนระดับเป็น LVL ${newLevel}! ร่างกายเริ่มวิวัฒนาการแล้ว!`);
+                alert(`🎉 ยินดีด้วย! สัตว์เลี้ยงของคุณเลื่อนระดับเป็น Level ${newLevel}!`);
             }
 
             if (category !== 'other') localStats[category] += 1;
