@@ -82,10 +82,20 @@ function updatePetUI() {
     petLevelEl.textContent = petData.level;
     expFill.style.width = `${petData.exp}%`;
     
-    // เปลี่ยนร่างตามเลเวล (ใช้ Emoji ง่ายๆ)
-    if (petData.level >= 10) petSprite.textContent = '🐉'; // มังกร
-    else if (petData.level >= 5) petSprite.textContent = '🦖'; // ไดโนเสาร์
-    else petSprite.textContent = '🥚'; // ไข่
+    // ระบบเปลี่ยนร่างตามเลเวล (Evolution)
+    if (petData.level >= 30) {
+        petSprite.textContent = '🐉'; // เลเวล 30+: มังกรเทพ
+    } else if (petData.level >= 20) {
+        petSprite.textContent = '🐯'; // เลเวล 20-29: เสือ
+    } else if (petData.level >= 15) {
+        petSprite.textContent = '🐕'; // เลเวล 15-19: หมาป่า/สุนัข
+    } else if (petData.level >= 10) {
+        petSprite.textContent = '🐔'; // เลเวล 10-14: ไก่โตเต็มวัย
+    } else if (petData.level >= 5) {
+        petSprite.textContent = '🐣'; // เลเวล 5-9: ลูกเจี๊ยบฟักออกจากไข่
+    } else {
+        petSprite.textContent = '🥚'; // เลเวล 1-4: ไข่
+    }
 }
 
 // 5. ระบบเพิ่มเควสต์ (Create)
@@ -160,11 +170,16 @@ function completeQuest(questId) {
     let newExp = petData.exp + 20;
     let newLevel = petData.level;
 
-    // ระบบ Level Up (ครบ 100 EXP = เลเวลอัป)
-    if (newExp >= 100) {
+    // ระบบ Level Up (รองรับกรณี EXP ทะลุหลอดหลายเลเวลพร้อมกัน)
+    let isLevelUp = false;
+    while (newExp >= 100) {
         newLevel += 1;
-        newExp = newExp - 100;
-        alert(`🎉 ยินดีด้วย! สัตว์เลี้ยงของคุณอัปเป็นเลเวล ${newLevel} แล้ว!`);
+        newExp -= 100;
+        isLevelUp = true;
+    }
+
+    if (isLevelUp) {
+        alert(`🎉 ยินดีด้วย! สัตว์เลี้ยงของคุณอัปเป็นเลเวล ${newLevel} แล้ว! รูปร่างอาจจะเปลี่ยนไปนะ!`);
     }
 
     userRef.update({
